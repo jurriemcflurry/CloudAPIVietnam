@@ -24,13 +24,13 @@ namespace CloudApiVietnam.Controllers
     [Authorize]
     public class ImagesController : ApiController
     {
-        ApplicationDbContext db = new ApplicationDbContext();
+        private ApplicationDbContext db = new ApplicationDbContext();
         // To be set AzureStorage if not, sql database will be used to store images (less than 32gb not advised)
         private string ImageStoragetype = System.Configuration.ConfigurationManager.AppSettings["ImageStoragetype"];
         // GET specific Image
         public async Task<HttpResponseMessage> Get(string id)
         {
-            MemoryStream imageStream = new MemoryStream();
+            var imageStream = new MemoryStream();
             HttpResponseMessage result;
 
             if (id == "")
@@ -38,8 +38,8 @@ namespace CloudApiVietnam.Controllers
 
             if (ImageStoragetype == "AzureStorage")
             {
-                CloudBlobContainer container = getStorageAccount();
-                CloudBlockBlob blockBlob = container.GetBlockBlobReference(id);
+                var container = getStorageAccount();
+                var blockBlob = container.GetBlockBlobReference(id);
 
                 try
                 {
@@ -47,8 +47,10 @@ namespace CloudApiVietnam.Controllers
                     imageStream.Position = 0;
                     if (imageStream == null)
                     {
-                        result = new HttpResponseMessage(HttpStatusCode.InternalServerError);
-                        result.Content = new StringContent("Requested image could not be downloaded..");
+                        result = new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                        {
+                            Content = new StringContent("Requested image could not be downloaded..")
+                        };
                         return result;
                     }
                 }
@@ -56,14 +58,18 @@ namespace CloudApiVietnam.Controllers
                 {
                     if (e.Message.Contains("(404)"))
                     {
-                        result = new HttpResponseMessage(HttpStatusCode.NotFound);
-                        result.Content = new StringContent("Image not found");
+                        result = new HttpResponseMessage(HttpStatusCode.NotFound)
+                        {
+                            Content = new StringContent("Image not found")
+                        };
                         return result;
                     }
                     else
                     {
-                        result = new HttpResponseMessage(HttpStatusCode.InternalServerError);
-                        result.Content = new StringContent(e.Message);
+                        result = new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                        {
+                            Content = new StringContent(e.Message)
+                        };
                         return result;
                     }
 
@@ -73,19 +79,23 @@ namespace CloudApiVietnam.Controllers
             {
                 try
                 {
-                    Image image = db.Image.Where(f => f.name == id).FirstOrDefault();
-                    imageStream = new MemoryStream(image.image);
+                    var image = db.Image.Where(f => f.Name == id).FirstOrDefault();
+                    imageStream = new MemoryStream(image.ImageData);
                 }
                 catch (Exception e)
                 {
-                    result = new HttpResponseMessage(HttpStatusCode.InternalServerError);
-                    result.Content = new StringContent(e.Message);
+                    result = new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                    {
+                        Content = new StringContent(e.Message)
+                    };
                     return result;
                 }
             }
 
-            result = new HttpResponseMessage(HttpStatusCode.OK);
-            result.Content = new StreamContent(imageStream);
+            result = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StreamContent(imageStream)
+            };
             result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
             return result;
         }
@@ -106,31 +116,26 @@ namespace CloudApiVietnam.Controllers
             }
             catch (Exception e)
             {
-                if (provider.Contents.Count == 0)
-                {
-                    return result = Request.CreateResponse(HttpStatusCode.BadRequest, "Uploaded file was not received, missing image or wrong content-type header");
-                }
-                else
-                {
-                    return CheckIfFileIsToBig(e);
-                }
+                if (provider.Contents.Count == 0)              
+                    return result = Request.CreateResponse(HttpStatusCode.BadRequest, "Uploaded file was not received, missing image or wrong content-type header");               
+                else              
+                    return CheckIfFileIsToBig(e);               
             }
 
-            List<Image> imageList = new List<Image>();
+            var imageList = new List<Image>();
 
             foreach (var file in provider.Contents)
             {
                 var filename = file.Headers.ContentDisposition.FileName.Trim('\"');
                 // Checking for file type and size
                 string imageType = filename.Split('.')[1];
-                var types = new List<string> { "jpeg", "jpg", "png" };
-                bool contains = types.Contains(imageType, StringComparer.OrdinalIgnoreCase);
-                if (!contains)
+                var types = new List<string> { "jpeg", "jpg", "png" };               
+                if (!types.Contains(imageType, StringComparer.OrdinalIgnoreCase))
                     return result = Request.CreateResponse(HttpStatusCode.BadRequest, "Types of Digital Image should be: jpeg, jpg or png");
             }
             foreach (var file in provider.Contents)
             {
-                Stream imageStream = await file.ReadAsStreamAsync();
+                var imageStream = await file.ReadAsStreamAsync();
                 var blobNameReference = $"{Guid.NewGuid().ToString()}";
 
                 if (ImageStoragetype == "AzureStorage")
@@ -139,7 +144,7 @@ namespace CloudApiVietnam.Controllers
                     {
                         await AzureStorageAsync(imageStream, blobNameReference);
                         Image image = new Image();
-                        image.name = blobNameReference;
+                        image.Name = blobNameReference;
                         imageList.Add(image);
                     }
                     catch (Exception e)
@@ -151,11 +156,13 @@ namespace CloudApiVietnam.Controllers
                 {
                     try
                     {
-                        Image image = new Image();
-                        image.name = blobNameReference;
-                        image.image = ConvertStreamToBytes(imageStream);
+                        Image image = new Image
+                        {
+                            Name = blobNameReference,
+                            ImageData = ConvertStreamToBytes(imageStream)
+                        };
                         SqlStorage(image);
-                        image.image = null;
+                        image.ImageData = null;
                         imageList.Add(image);
                     }
                     catch (Exception e)
@@ -181,7 +188,7 @@ namespace CloudApiVietnam.Controllers
             {
                 var container = getStorageAccount();
 
-                CloudBlockBlob blockBlob = container.GetBlockBlobReference(id);
+                var blockBlob = container.GetBlockBlobReference(id);
                 // Delete the blob.
                 try
                 {
@@ -191,14 +198,18 @@ namespace CloudApiVietnam.Controllers
                 {
                     if (e.Message.Contains("(404)"))
                     {
-                        result = new HttpResponseMessage(HttpStatusCode.NotFound);
-                        result.Content = new StringContent("Image not found");
+                        result = new HttpResponseMessage(HttpStatusCode.NotFound)
+                        {
+                            Content = new StringContent("Image not found")
+                        };
                         return result;
                     }
                     else
                     {
-                        result = new HttpResponseMessage(HttpStatusCode.InternalServerError);
-                        result.Content = new StringContent(e.Message);
+                        result = new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                        {
+                            Content = new StringContent(e.Message)
+                        };
                         return result;
                     }
 
@@ -209,14 +220,16 @@ namespace CloudApiVietnam.Controllers
             {
                 try
                 {
-                    var image = db.Image.Where(f => f.name == id).FirstOrDefault();
+                    var image = db.Image.Where(f => f.Name == id).FirstOrDefault();
                     db.Image.Remove(image);
                     db.SaveChanges();
                 }
                 catch (Exception e)
                 {
-                    result = new HttpResponseMessage(HttpStatusCode.InternalServerError);
-                    result.Content = new StringContent(e.Message);
+                    result = new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                    {
+                        Content = new StringContent(e.Message)
+                    };
                     return result;
                 }
             }
@@ -228,18 +241,22 @@ namespace CloudApiVietnam.Controllers
         private HttpResponseMessage CheckIfFileIsToBig(Exception e)
         {
             // Returning a clean file is to big message.
-            List<string> errors = new List<string> { "De maximale aanvraaglengte is overschreden.", "Maximum request length exceeded.", "Độ dài yêu cầu tối đa đã bị vượt quá" };
+            var errors = new List<string> { "De maximale aanvraaglengte is overschreden.", "Maximum request length exceeded.", "Độ dài yêu cầu tối đa đã bị vượt quá" };
             HttpResponseMessage result;
             if (errors.Contains(e.InnerException.Message, StringComparer.OrdinalIgnoreCase))
             {
-                result = new HttpResponseMessage(HttpStatusCode.RequestEntityTooLarge);
-                result.Content = new StringContent("Image size should be smaller than 5,0 MBytes");
+                result = new HttpResponseMessage(HttpStatusCode.RequestEntityTooLarge)
+                {
+                    Content = new StringContent("Image size should be smaller than 5,0 MBytes")
+                };
                 return result;
             }
             else
             {
-                result = new HttpResponseMessage(HttpStatusCode.InternalServerError);
-                result.Content = new StringContent(e.Message);
+                result = new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                {
+                    Content = new StringContent(e.Message)
+                };
                 return result;
             }
         }
@@ -266,8 +283,8 @@ namespace CloudApiVietnam.Controllers
         {
             // Get storage account
             CloudStorageAccount storageAccount = new CloudStorageAccount(
-            new Microsoft.WindowsAzure.Storage.Auth.StorageCredentials(System.Configuration.ConfigurationManager.AppSettings["azureStorageAccount"],
-            System.Configuration.ConfigurationManager.AppSettings["azureStorageAccountKey"]), true);
+                new Microsoft.WindowsAzure.Storage.Auth.StorageCredentials(System.Configuration.ConfigurationManager.AppSettings["azureStorageAccount"],
+                System.Configuration.ConfigurationManager.AppSettings["azureStorageAccountKey"]), true);
 
             // Create Blob reference
             var blobClient = storageAccount.CreateCloudBlobClient();
@@ -288,10 +305,13 @@ namespace CloudApiVietnam.Controllers
                 return ms.ToArray();
             }
         }
+
         private HttpResponseMessage IdIsNullResponse(out HttpResponseMessage result)
         {
-            result = new HttpResponseMessage(HttpStatusCode.BadRequest);
-            result.Content = new StringContent("Image reference not given");
+            result = new HttpResponseMessage(HttpStatusCode.BadRequest)
+            {
+                Content = new StringContent("Image reference not given")
+            };
             return result;
         }
     }

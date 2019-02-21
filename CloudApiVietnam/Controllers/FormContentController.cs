@@ -13,7 +13,7 @@ namespace CloudApiVietnam.Controllers
     [Authorize]
     public class FormContentController : ApiController
     {
-        ApplicationDbContext db = new ApplicationDbContext();
+        private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET alle FormContent
         public HttpResponseMessage Get()
@@ -21,10 +21,9 @@ namespace CloudApiVietnam.Controllers
             try
             {
                 var formContent = db.FormContent.ToList();
-                if (formContent == null)
-                {
+                if (formContent == null)               
                     return Request.CreateResponse(HttpStatusCode.NoContent, "No FormContent found");
-                }
+                
                 return Request.CreateResponse(HttpStatusCode.OK, formContent);
             }
             catch (Exception ex)
@@ -37,14 +36,11 @@ namespace CloudApiVietnam.Controllers
         public HttpResponseMessage Get(int id)
         {
             var formContent = db.FormContent.Where(f => f.Id == id).FirstOrDefault();
-            if (formContent == null)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "No FormContent found with id: " + id.ToString());
-            }
-            else
-            {
+            if (formContent == null)           
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "No FormContent found with id: " + id.ToString());    
+            else           
                 return Request.CreateResponse(HttpStatusCode.OK, formContent);
-            }
+            
         }
 
         // POST een FormContent
@@ -52,13 +48,11 @@ namespace CloudApiVietnam.Controllers
         {
             try
             {
-                IsJSON isJson = IsValidJson(formContentBindingModel.Content); // Check of JSON klopt en maak resultaat object
-                if (!isJson.Status) // als resultaat object status fals is return error
-                {
+                var isJson = IsValidJson(formContentBindingModel.Content); // Check of JSON klopt en maak resultaat object
+                if (!isJson.Status) // als resultaat object status fals is return error               
                     return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "JSON in 'content' is not correct JSON: " + isJson.Error);
-                }
-
-                ContentEqeulsHeadersCheck headersCheck = ContentEqeulsHeaders(formContentBindingModel);
+                
+                var headersCheck = ContentEqualsHeaders(formContentBindingModel);
                 if (!headersCheck.Status)
                 {
                     return Request.CreateErrorResponse(HttpStatusCode.BadRequest, headersCheck.Error);
@@ -95,14 +89,12 @@ namespace CloudApiVietnam.Controllers
             {
                 formContent.FormulierenId = UpdateObject.FormId;
 
-                IsJSON isJson = IsValidJson(UpdateObject.Content); // Check of JSON klopt en maak resultaat object
-                if (!isJson.Status) // als resultaat object status fals is return error
-                {
+                var isJson = IsValidJson(UpdateObject.Content); // Check of JSON klopt en maak resultaat object
+                if (!isJson.Status) // als resultaat object status fals is return error                
                     return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "JSON in 'content' is not correct JSON: " + isJson.Error);
-                }
+                
 
-
-                ContentEqeulsHeadersCheck headersCheck = ContentEqeulsHeaders(UpdateObject);
+                var headersCheck = ContentEqualsHeaders(UpdateObject);
                 if (!headersCheck.Status)
                 {
                     return Request.CreateErrorResponse(HttpStatusCode.BadRequest, headersCheck.Error);
@@ -181,9 +173,9 @@ namespace CloudApiVietnam.Controllers
             }
         }
 
-        private ContentEqeulsHeadersCheck ContentEqeulsHeaders(FormContentBindingModel formContentBindingModel)
+        private ContentEqualsHeadersCheck ContentEqualsHeaders(FormContentBindingModel formContentBindingModel)
         {
-            ContentEqeulsHeadersCheck result = new ContentEqeulsHeadersCheck();
+            var result = new ContentEqualsHeadersCheck();
             var Formulier = db.Formulieren.Where(f => f.Id == formContentBindingModel.FormId).FirstOrDefault(); //Haalt bijbehorende formulier op
 
             var obj = JToken.Parse(formContentBindingModel.Content); //Maak object van mee gegeven content

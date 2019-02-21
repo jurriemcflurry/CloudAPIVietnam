@@ -15,5 +15,7 @@ namespace CloudApiVietnam.Models
         public  string Id { get; set; }
   
         public  string UserName { get; set; }
+
+        public  string FavoriteSong { get; set; }
     }
 }

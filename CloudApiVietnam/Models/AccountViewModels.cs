@@ -34,6 +34,8 @@ namespace CloudApiVietnam.Models
         public string Name { get; set; }
 
         public string UserRole { get; set; }
+
+        public string FavoriteSong { get; set; }
     }
 
     public class UserLoginInfoViewModel

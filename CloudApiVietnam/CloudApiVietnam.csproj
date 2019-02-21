@@ -313,10 +313,42 @@
     <Compile Include="Migrations\201811061910549_IgnoreCliamsAndLogins.Designer.cs">
       <DependentUpon>201811061910549_IgnoreCliamsAndLogins.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201811271051332_renameImages.cs" />
+    <Compile Include="Migrations\201811271051332_renameImages.Designer.cs">
+      <DependentUpon>201811271051332_renameImages.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201901281438499_Juriaan.cs" />
+    <Compile Include="Migrations\201901281438499_Juriaan.Designer.cs">
+      <DependentUpon>201901281438499_Juriaan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201901281443533_Juriaan1.cs" />
+    <Compile Include="Migrations\201901281443533_Juriaan1.Designer.cs">
+      <DependentUpon>201901281443533_Juriaan1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201901281454426_Juriaan2.cs" />
+    <Compile Include="Migrations\201901281454426_Juriaan2.Designer.cs">
+      <DependentUpon>201901281454426_Juriaan2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201901281514065_Juraan.cs" />
+    <Compile Include="Migrations\201901281514065_Juraan.Designer.cs">
+      <DependentUpon>201901281514065_Juraan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201901281516372_Jurian.cs" />
+    <Compile Include="Migrations\201901281516372_Jurian.Designer.cs">
+      <DependentUpon>201901281516372_Jurian.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201901281527510_Jurinaa.cs" />
+    <Compile Include="Migrations\201901281527510_Jurinaa.Designer.cs">
+      <DependentUpon>201901281527510_Jurinaa.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201901281535554_Juriaan3.cs" />
+    <Compile Include="Migrations\201901281535554_Juriaan3.Designer.cs">
+      <DependentUpon>201901281535554_Juriaan3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\ContentEqeulsHeadersCheck.cs" />
+    <Compile Include="Models\ContentEqualsHeadersCheck.cs" />
     <Compile Include="Models\FormContent.cs" />
     <Compile Include="Models\FormContentBindingModel.cs" />
     <Compile Include="Models\ImageBindingModel.cs" />
@@ -324,7 +356,7 @@
     <Compile Include="Models\FormulierenBindingModel.cs" />
     <Compile Include="Models\Formulieren.cs" />
     <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\isJSON.cs" />
+    <Compile Include="Models\IsJSON.cs" />
     <Compile Include="Models\UserInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
@@ -385,6 +417,7 @@
     <Content Include="Scripts\esm\popper.js.map" />
     <Content Include="Scripts\esm\popper-utils.min.js.map" />
     <Content Include="Scripts\esm\popper-utils.js.map" />
+    <None Include="Properties\PublishProfiles\CloudAPICustom - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CloudApiVietnam - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
@@ -405,7 +438,9 @@
     <Content Include="Scripts\umd\popper-utils.min.js" />
     <Content Include="Scripts\umd\popper.js" />
     <Content Include="Scripts\umd\popper.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -490,6 +525,30 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201811061910549_IgnoreCliamsAndLogins.resx">
       <DependentUpon>201811061910549_IgnoreCliamsAndLogins.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811271051332_renameImages.resx">
+      <DependentUpon>201811271051332_renameImages.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901281438499_Juriaan.resx">
+      <DependentUpon>201901281438499_Juriaan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901281443533_Juriaan1.resx">
+      <DependentUpon>201901281443533_Juriaan1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901281454426_Juriaan2.resx">
+      <DependentUpon>201901281454426_Juriaan2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901281514065_Juraan.resx">
+      <DependentUpon>201901281514065_Juraan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901281516372_Jurian.resx">
+      <DependentUpon>201901281516372_Jurian.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901281527510_Jurinaa.resx">
+      <DependentUpon>201901281527510_Jurinaa.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901281535554_Juriaan3.resx">
+      <DependentUpon>201901281535554_Juriaan3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
